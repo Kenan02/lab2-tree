@@ -71,6 +71,7 @@ class TerminalUI:
         if self._tree.is_empty():
             print("\n  Tree is empty\n")
             return
+        
 
         self.show_2d()
         print("")
@@ -186,12 +187,28 @@ class TerminalUI:
         Shows a pretty 2D tree based on the output of bfs_order_star(). None
         values are are replaced by stars ("*").
         '''
-
-        if self.is_empty():
-            print("\nTree is empty\n")
-
-        tree = self._tree.bfs_order_star()
+        
+        arr = self._tree.bfs_order_star()
+        
+        printList = ['*' if x is None else x for x in arr]
+        
         h = self._tree.height()
+        arr_count = 0
+        
+        
+        print("\n")
+        
+        for i in range(0, h):
+            
+            
+            spacing = 2**(h-i+1)-1
+            for j in range(0, 2**i):
+                
+                print("", str(printList[arr_count]).center((spacing)), end= '')
+                arr_count += 1
+                
+            print("\n")
+
 
 
 

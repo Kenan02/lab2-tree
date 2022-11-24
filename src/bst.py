@@ -30,7 +30,7 @@ class BST(bt.BT):
             return self.rc().is_member(v)
         else:
             return self.lc().is_member(v)
-
+        
         return False
 
     def size(self):
@@ -89,38 +89,23 @@ class BST(bt.BT):
 
 
 
-    def noneroot(self, index, size):
-        exclusion = []
-        left_child = right_child = index
+    def none_fix(self, arr):
+        '''
+        Inserts None to make it possible to print a full tree to the bottom.
+        Like the example in bfs_order_star
+        '''
+        counter = 0
+        for i in range(0, self.height()):
+            for j in range(0, 2**i):
+                if len(arr) > counter and arr[counter] == None:
+                    arr.insert((counter*2)+1, None)
+                    arr.insert((counter*2)+2, None)
+                counter += 1
+        while(len(arr) > (2**self.height()-1)):
+            arr.pop()
 
-        while left_child <= size:
-            exclusion.append(left_child)
-            left_child = (2 * left_child) + 1
-
-        while right_child <= size:
-            exclusion.append(right_child)
-            right_child = (2 * right_child) + 2
-
-        return exclusion
-
-
-    def bfs_lista(self):
-        queue = []
-        temp = []
-
-        queue.append(self)
-
-        while(len(queue) > 0):
-            temp.append(queue[0])
-            node = queue.pop(0)
-
-            if not node.lc().is_empty():
-                queue.append(node.lc())
-
-            if not node.rc().is_empty():
-                queue.append(node.rc())
-
-        return temp
+        return arr
+    
 
     def bfs_order_star(self):
         '''
@@ -135,32 +120,31 @@ class BST(bt.BT):
         The output of t.bfs_order_star() should be:
         [ 10, 5, 15, None, None, None, 20 ]
         '''
-
+        
         if self.is_empty():
             return []
-        else:
-            total = ((2**self.height()) - 1)
+        
+        temp_queue = []
+        arr = []
+        temp_queue.append(self)
+        
+        
+        while(len(temp_queue) > 0):
+            arr.append(temp_queue[0].value())
+            parent = temp_queue.pop(0)
+            
+            
+            if parent.lc() is not None:
+                temp_queue.append(parent.lc())
+                
+                
+            if parent.rc() is not None:
+                temp_queue.append(parent.rc())
+        
+        
 
-
-            tree = self.bfs_lista()
-            bfsqueue = [None] * total
-            exclusion = []
-
-            for i in range(total):
-                if i not in exclusion:
-                    if len(tree) > 0:
-                        node = tree.pop(0)
-                        bfsqueue = node.value()
-
-                        if node.lc().is_empty():
-                            i_left = (2 * i) + 1
-                            exclusion += self.noneroot(i_left, total)
-
-                        if node.rc().is_empty():
-                            i_right = (2 * i) + 2
-                            exclusion += self.noneroot(i_right, total)
-
-        return bfsqueue
+        
+        return self.none_fix(arr)
 
     def add(self, v):
         '''
@@ -175,14 +159,126 @@ class BST(bt.BT):
         if v > self.value():
             return self.cons(self.lc(), self.rc().add(v))
         return self
+    
+    def minimum(self):
+        '''
+        Minimum node of tree
+        '''
+        if self.lc() is None:
+            return self
+        else:
+            return self.lc().minimum()
+    
+    
 
     def delete(self, v):
         '''
         Removes the value `v` from the tree and returns the new (updated) tree.
         If `v` is a non-member, the same tree is returned without modification.
         '''
-        log.info("TODO@src/bst.py: implement delete()")
-        return self
+        if self.is_empty() or not self.is_member(v):
+            return self
+        
+        if v < self.value():
+            return self.cons(self.lc().delete(v), self.rc())
+        
+        elif v > self.value():
+            return self.cons(self.lc(), self.rc().delete(v))
+        
+        
+        # when a node has 1 or 0 children
+        
+        if self.lc().value() is None:
+            tmp = self.rc()
+            self.set_value(None)
+            return tmp
+        
+        elif self.rc().value() is None:
+            tmp = self.lc()
+            self.set_value(None)
+            return tmp
+    
+        
+        
+        else:
+            '''
+            if node has 2 children get the biggest node from left subtree or the smallest node from right tree
+            depending on which has the biggest height to not cause unbalance, if the case is that they are the same height,
+            then always pick left
+            '''
+            
+
+            #Right subtree height bigger than left subtree
+            
+            if self.lc().height() < self.rc().height():
+                node = self.rc().min_value_node()
+                self.set_value(node.value())
+                
+                # if the nodes have any children to the right bring them up in the tree
+                if node.rc().value() is not None:
+                    node.set_value(node.rc().value)
+                    node.cons(node.rc().lc(), node.rc().rc())
+                    return self.cons(self.lc(), self.rc())
+                
+                else:
+                    node.set_value(None)
+                    node.set_rc(None)
+                    node.set_lc(None)
+                    return self.cons(self.lc(), self.rc())
+                
+                
+            
+            #Left subtree height bigger than left or they same height
+            else:
+                node = self.lc().max_value_node()
+                self.set_value(node.value())
+                
+                
+                #Check if node has children to the left and bring them up in the tree
+                if node.lc().value is not None:
+                    node.set_value(node.lc().value())
+                    node.cons(node.lc().lc(), node.lc().rc())
+                    return self.cons(self.lc(), self.rc())
+                
+                #if no children set to NULL and rebuild self
+                else:
+                    node.set_value(None) 
+                    node.set_lc(None)
+                    node.set_rc(None)
+                    return self.cons(self.lc(), self.rc())
+                
+                
+                
+        return self       
+        
+        
+        
+    def min_value_node(self):
+        '''
+        traverse left in the tree until NULL and returns the
+        last node that has a value
+        '''
+        
+        if self.lc().value() is not None:
+            return self.lc().min_value_node()
+        else:
+            return self
+
+    def max_value_node(self):
+        '''
+        Traverse right in the tree until NULL and returns the
+        last node that has a value
+        '''
+        
+        
+        if self.rc().value() is not None:
+            return self.rc().max_value_node()
+        else:
+            return self   
+                
+            
+        
+      
 
 
 if __name__ == "__main__":
