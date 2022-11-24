@@ -188,10 +188,14 @@ class TerminalUI:
         values are are replaced by stars ("*").
         '''
         
+        
+        #Get the tree as an array
         arr = self._tree.bfs_order_star()
         
+        #replace all None spots with *
         printList = ['*' if x is None else x for x in arr]
         
+        #Saving height in variable for better readability and to skip rewriting height function
         h = self._tree.height()
         arr_count = 0
         
@@ -199,7 +203,7 @@ class TerminalUI:
         print("\n")
         
         for i in range(0, h):
-            
+            #Calculate space inbetween nodes, scaleable depending
             
             spacing = 2**(h-i+1)-1
             for j in range(0, 2**i):

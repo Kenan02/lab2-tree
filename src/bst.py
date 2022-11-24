@@ -156,7 +156,7 @@ class BST(bt.BT):
             return self
         if v < self.value():
             return self.cons(self.lc().add(v), self.rc())
-        if v > self.value():
+        if v >= self.value():
             return self.cons(self.lc(), self.rc().add(v))
         return self
     
