@@ -29,8 +29,8 @@ class AVL(bst.BST):
 
 
     def delete(self, v):
-        super().delete(v)
-        return self.balance
+        
+        return super().delete(v)
 
 
 

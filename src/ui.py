@@ -203,7 +203,7 @@ class TerminalUI:
         print("\n")
         
         for i in range(0, h):
-            #Calculate space inbetween nodes, scaleable depending
+            #Calculate space inbetween nodes, scalable depending
             
             spacing = 2**(h-i+1)-1
             for j in range(0, 2**i):
