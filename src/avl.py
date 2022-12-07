@@ -49,7 +49,7 @@ class AVL(bst.BST):
         AVL-balances around the node rooted at `self`.  In other words, this
         method applies one of the following if necessary: slr, srr, dlr, drr.
         '''
-        #checking if tree is right heavy or left heavy trough the equations explained in delete function
+        #checking if tree is right heavy or left heavy through the equations explained in delete function
         #if it is negative, its right heavy, if it is positive its left heavy
         if self.balance_check() <= -2:
             if self.rc().balance_check() >= 1:
