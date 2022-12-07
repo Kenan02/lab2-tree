@@ -38,7 +38,7 @@ class AVL(bst.BST):
 
     def balance_check(self):
         #balance equation: height of left node - height of right node, B(h) = H(left) - H(right)
-        # and then setting a threshold
+        
         
         return self.lc().height() - self.rc().height()
       
