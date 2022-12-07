@@ -26,23 +26,17 @@ class AVL(bst.BST):
         return self.balance() 
         
 
-
-
     def delete(self, v):
         
         bst.BST.delete(self, v)
         return self.balance()
 
 
-
-
     def balance_check(self):
         #balance equation: height of left node - height of right node, B(h) = H(left) - H(right)
         
-        
         return self.lc().height() - self.rc().height()
       
-
 
     def balance(self):
         '''
@@ -65,7 +59,6 @@ class AVL(bst.BST):
         return self        
         
 
-
     def slr(self):
         '''
         Performs a single-left rotate around the node rooted at `self`.
@@ -75,6 +68,7 @@ class AVL(bst.BST):
         node.set_lc(self)
         
         return node
+
 
     def srr(self):
         '''
@@ -87,6 +81,7 @@ class AVL(bst.BST):
         
         
         return node
+    
 
     def dlr(self):
         '''
@@ -103,6 +98,7 @@ class AVL(bst.BST):
         '''
         self.set_lc(self.lc().slr())
         return self.srr()
+    
 
 if __name__ == "__main__":
     log.critical("module contains no main module")
