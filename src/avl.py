@@ -22,7 +22,7 @@ class AVL(bst.BST):
         may remove this function and overide something else if you'd like.
         '''
        
-        super().add(v)
+        bst.BST.add(self, v)
         return self.balance() 
         
 
@@ -30,7 +30,8 @@ class AVL(bst.BST):
 
     def delete(self, v):
         
-        return super().delete(v)
+        bst.BST.delete(self, v)
+        return self.balance()
 
 
 
@@ -39,10 +40,8 @@ class AVL(bst.BST):
         #balance equation: height of left node - height of right node, B(h) = H(left) - H(right)
         # and then setting a threshold
         
-        left = self.lc().height() if self.lc() is not None else 0
-        right = self.rc().height() if self.rc() is not None else 0
-        
-        return left - right 
+        return self.lc().height() - self.rc().height()
+      
 
 
     def balance(self):
@@ -51,23 +50,18 @@ class AVL(bst.BST):
         method applies one of the following if necessary: slr, srr, dlr, drr.
         '''
         
-        balance = self.balance_check()
-        
-        if balance == 2:
-            if self.lc().balance_check() >= 0:
-                return self.srr()
-            else:
-                return self.drr()
-            
-        elif balance == -2:
-            if self.rc().balance_check() <= 0:
-                return self.slr()
-            else:
+        if self.balance_check() <= -2:
+            if self.rc().balance_check() >= 1:
                 return self.dlr()
+            else:
+                return self.slr()
+        if self.balance_check() >= 2:
+            if self.lc().balance_check() <= -1:
+                return self.drr()
+            else:
+                return self.srr()
             
-        else:
-            return self
-        
+        return self        
         
 
 
@@ -100,12 +94,13 @@ class AVL(bst.BST):
         
         self.set_rc(self.rc().srr())
         return self.slr()
+    
 
     def drr(self):
         '''
         Performs a double-right rotate around the node rooted at `self`.
         '''
-        self.set_lc(self.lc().slr)
+        self.set_lc(self.lc().slr())
         return self.srr()
 
 if __name__ == "__main__":
