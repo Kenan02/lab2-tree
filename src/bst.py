@@ -30,7 +30,6 @@ class BST(bt.BT):
             return self.rc().is_member(v)
         else:
             return self.lc().is_member(v)
-        
         return False
 
     def size(self):
@@ -124,20 +123,22 @@ class BST(bt.BT):
         if self.is_empty():
             return []
         
+        #
         temp_queue = []
         arr = []
         temp_queue.append(self)
         
         
         while(len(temp_queue) > 0):
-            arr.append(temp_queue[0].value())
+            arr.append(temp_queue[0].value()) #stores values of nodes in queue
             parent = temp_queue.pop(0)
             
             
+            #Stores left node in queue if its not None
             if parent.lc() is not None:
                 temp_queue.append(parent.lc())
                 
-                
+            #Stores right node in queue if its not None
             if parent.rc() is not None:
                 temp_queue.append(parent.rc())
         
@@ -176,78 +177,26 @@ class BST(bt.BT):
         Removes the value `v` from the tree and returns the new (updated) tree.
         If `v` is a non-member, the same tree is returned without modification.
         '''
-        if self.is_empty() or not self.is_member(v):
+        #if it is a leaf node, in other words if the node has no children
+        if not self.is_member(v):
             return self
-        
         if v < self.value():
-            return self.cons(self.lc().delete(v), self.rc())
-        
+            self.lc().delete(v)
         elif v > self.value():
-            return self.cons(self.lc(), self.rc().delete(v))
-        
-        
-        # when a node has 1 or 0 children
-        
-        if self.lc().value() is None:
-            tmp = self.rc()
-            self.set_value(None)
-            return tmp
-        
-        elif self.rc().value() is None:
-            tmp = self.lc()
-            self.set_value(None)
-            return tmp
-    
-        
-        
+            self.rc().delete(v)
+            
+        #if the node has 1 or more children
         else:
-            '''
-            if node has 2 children get the biggest node from left subtree or the smallest node from right tree
-            depending on which has the biggest height to not cause unbalance, if the case is that they are the same height,
-            then always pick left
-            '''
+            if self.lc().is_empty():
+                self.set_value(self.rc().value())
+                return self.rc().set_value(None)
+            elif self.rc().is_empty():
+                self.set_value(self.lc().value())
+                return self.lc().set_value(None)
             
-
-            #Right subtree height bigger than left subtree
-            
-            if self.lc().height() < self.rc().height():
-                node = self.rc().min_value_node()
-                self.set_value(node.value())
-                
-                # if the nodes have any children to the right bring them up in the tree
-                if node.rc().value() is not None:
-                    node.set_value(node.rc().value)
-                    node.cons(node.rc().lc(), node.rc().rc())
-                    return self.cons(self.lc(), self.rc())
-                
-                else:
-                    node.set_value(None)
-                    node.set_rc(None)
-                    node.set_lc(None)
-                    return self.cons(self.lc(), self.rc())
-                
-                
-            
-            #Left subtree height bigger than left or they same height
-            else:
-                node = self.lc().max_value_node()
-                self.set_value(node.value())
-                
-                
-                #Check if node has children to the left and bring them up in the tree
-                if node.lc().value is not None:
-                    node.set_value(node.lc().value())
-                    node.cons(node.lc().lc(), node.lc().rc())
-                    return self.cons(self.lc(), self.rc())
-                
-                #if no children set to NULL and rebuild self
-                else:
-                    node.set_value(None) 
-                    node.set_lc(None)
-                    node.set_rc(None)
-                    return self.cons(self.lc(), self.rc())
-                
-                
+            tmp = self.rc().min_value_node()
+            self.set_value(tmp.value())
+            self.rc().delete(tmp.value())
                 
         return self       
         
